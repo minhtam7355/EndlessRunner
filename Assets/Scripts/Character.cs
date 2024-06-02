@@ -8,10 +8,10 @@ public enum Side { Left, Mid, Right }
 public class Character : MonoBehaviour
 {
 	public Side CurrentSide = Side.Mid;
-	private float _newXPosition = 0f;
+	private float _newXPosition = -1f;
 	[HideInInspector]
 	public bool SwipeLeft, SwipeRight, SwipeUp, SwipeDown;
-	public float XValue;
+	public float XValue=1;
 	private CharacterController _characterController;
 	private Animator _animator;
 	private float _horizontalVelocity;
@@ -27,7 +27,7 @@ public class Character : MonoBehaviour
 		_collisionHeight = _characterController.height;
 		_collisionCenterY = _characterController.center.y;
 		_animator = GetComponent<Animator>();
-		transform.position = Vector3.zero;
+		transform.position = new Vector3(-1f, 0, 0);
 	}
 
 	// Update is called once per frame
@@ -41,13 +41,13 @@ public class Character : MonoBehaviour
 		{
 			if (CurrentSide == Side.Mid)
 			{
-				_newXPosition = -XValue;
+				_newXPosition = -6.5f;
 				CurrentSide = Side.Left;
 				_animator.Play("Dodge_Left");
 			}
 			else if (CurrentSide == Side.Right)
 			{
-				_newXPosition = 0;
+				_newXPosition = -1f;
 				CurrentSide = Side.Mid;
 				_animator.Play("Dodge_Left");
 			}
@@ -56,13 +56,13 @@ public class Character : MonoBehaviour
 		{
 			if (CurrentSide == Side.Mid)
 			{
-				_newXPosition = XValue;
+				_newXPosition = 4.5f;
 				CurrentSide = Side.Right;
 				_animator.Play("Dodge_Right");
 			}
 			else if (CurrentSide == Side.Left)
 			{
-				_newXPosition = 0;
+				_newXPosition = -1f;
 				CurrentSide = Side.Mid;
 				_animator.Play("Dodge_Right");
 			}
@@ -107,10 +107,10 @@ public class Character : MonoBehaviour
 		}
 		if (SwipeDown)
 		{
-			_rollCounter = 0.2f;
+			_rollCounter = 0.5f;
 			_verticalVelocity -= 10f;
-			_characterController.center = new Vector3(0, _collisionCenterY / 2f, 0);
-			_characterController.height = _collisionHeight / 2f;
+			_characterController.center = new Vector3(0, _collisionCenterY / 3f, 0);
+			_characterController.height = _collisionHeight / 3f;
 			_animator.CrossFadeInFixedTime("Roll", 0.1f);
 			_animator.speed = 5.5f; // Speed up the Roll animation
 			InRoll = true;
