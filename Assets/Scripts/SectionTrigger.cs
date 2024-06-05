@@ -36,7 +36,7 @@ public class SectionTrigger : MonoBehaviour
         sectionObstacles.Add(newSection, obstacles);
 
         // If more than 2 sections are active, deactivate the oldest one
-        if (activeSections.Count > 2)
+        if (activeSections.Count > 3)
         {
             GameObject oldSection = activeSections.Dequeue();
             List<GameObject> oldObstacles;
@@ -67,8 +67,8 @@ public class SectionTrigger : MonoBehaviour
         new Vector3(5.5f, 0, 68),
         new Vector3(-7f, 0, 95),
         new Vector3(-7f, 0, 68),
-        new Vector3(-0.5f, 6, 68),
-        new Vector3(-0.5f, 6, 95)
+        new Vector3(-5f, 7, 68),
+        new Vector3(-5f, 7, 95)
     };
 
         // Shuffle the list to randomize the order of positions
@@ -96,9 +96,10 @@ public class SectionTrigger : MonoBehaviour
             {
                 obstacleArray = obstaclesAtMinus0_5;
             }
-            else if (position.x == -0.5f && position.y == 6)
+            else if (position.x == -5f && position.y == 7)
             {
                 obstacleArray = roofObstacle;
+                
             }
             else if (position.x == 5.5f)
             {
