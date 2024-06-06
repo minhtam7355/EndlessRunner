@@ -109,10 +109,10 @@ public class Character : MonoBehaviour
 		{
 			_rollCounter = 0.8f;
 			_verticalVelocity -= 10f;
-			_characterController.center = new Vector3(0, _collisionCenterY / 3f, 0);
-			_characterController.height = _collisionHeight / 3f;
-			_animator.CrossFadeInFixedTime("Roll", 0.4f);
-			_animator.speed = 2.5f; // Speed up the Roll animation
+			_characterController.center = new Vector3(0, _collisionCenterY / 2f, 0);
+			_characterController.height = _collisionHeight / 2f;
+			_animator.CrossFadeInFixedTime("Roll", 0.6f);
+			_animator.speed = 2f; // Speed up the Roll animation
 			InRoll = true;
 			InJump = false;
 		}

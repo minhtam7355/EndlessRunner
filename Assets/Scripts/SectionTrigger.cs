@@ -59,16 +59,16 @@ public class SectionTrigger : MonoBehaviour
         // Define the possible positions for the obstacles
         List<Vector3> possiblePositions = new List<Vector3>
     {
-        new Vector3(-5.5f, 0, 95),
-        new Vector3(-5.5f, 0, 68),
-        new Vector3(-0.5f, 0, 95),
-        new Vector3(-0.5f, 0, 68),
-        new Vector3(5.5f, 0, 95),
-        new Vector3(5.5f, 0, 68),
-        new Vector3(-7f, 0, 95),
-        new Vector3(-7f, 0, 68),
-        new Vector3(-5f, 7, 68),
-        new Vector3(-5f, 7, 95)
+        new Vector3(-5.5f, 0, Player.position.z+distanceAhead+35),
+        new Vector3(-5.5f, 0, Player.position.z+distanceAhead+15),
+        new Vector3(-0.5f, 0, Player.position.z+distanceAhead+35),
+        new Vector3(-0.5f, 0, Player.position.z+distanceAhead+15),
+        new Vector3(5.5f, 0, Player.position.z+distanceAhead+35),
+        new Vector3(5.5f, 0, Player.position.z+distanceAhead+15),
+        new Vector3(-7f, 0, Player.position.z+distanceAhead+35),
+        new Vector3(-7f, 0, Player.position.z+distanceAhead+35),
+        new Vector3(-8.5f, 7, Player.position.z+distanceAhead+15),
+        new Vector3(-8.5f, 7, Player.position.z+distanceAhead+35)
     };
 
         // Shuffle the list to randomize the order of positions
@@ -96,7 +96,7 @@ public class SectionTrigger : MonoBehaviour
             {
                 obstacleArray = obstaclesAtMinus0_5;
             }
-            else if (position.x == -5f && position.y == 7)
+            else if (position.x == -8.5f && position.y == 7)
             {
                 obstacleArray = roofObstacle;
                 
