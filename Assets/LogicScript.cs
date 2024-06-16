@@ -5,13 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class LogicScript : MonoBehaviour
 {
-    public GameObject GameOverScene;
-    public void restartGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-    public void gameOver()
-    {
-        GameOverScene.SetActive(true);
-    }
+	public GameObject GameOverScene;
+	public void restartGame()
+	{
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		Time.timeScale = 1f;
+
+	}
+	public void gameOver()
+	{
+		GameOverScene.SetActive(true);
+	}
 }

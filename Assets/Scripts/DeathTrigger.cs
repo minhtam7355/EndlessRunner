@@ -4,41 +4,59 @@ using UnityEngine;
 
 public class DeathTrigger : MonoBehaviour
 {
-    public bool IsDead { get; private set; }
-    // Start is called before the first frame update
-    public LogicScript logic;
-    [SerializeField]
-    private float maxZPosition = -8f; // Set your threshold value
-    void Start()
-    {
-        IsDead = false;
-    }
+	private Animator _animator;
+	public bool IsDead { get; private set; }
+	public LogicScript logic;
+	[SerializeField]
+	private float maxZPosition; // Set your threshold value
 
-    // Update is called once per frame
-    private void Update()
-    {
-        if (transform.position.z < maxZPosition)
-        {
-            Die();
-            logic.gameOver();
-        }
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("KillZone"))
-        {
-            Die();
-            logic.gameOver();
-        }
-    }
-    public void Die()
-    {
-        if (IsDead) return;
+	void Start()
+	{
+		IsDead = false;
+		_animator = GetComponent<Animator>();
+	}
 
-        IsDead = true;
+	// Update is called once per frame
+	void Update()
+	{
+		if (transform.position.z < maxZPosition)
+		{
+			Die();
+		}
+	}
 
-        Debug.Log("Player died!");
-        Time.timeScale = 0;
-        // Perform actions such as playing death animation, reducing health, restarting level, etc.
-    }
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.CompareTag("KillZone"))
+		{
+			Die();
+		}
+	}
+
+	public void Die()
+	{
+		if (IsDead) return;
+
+		IsDead = true;
+
+		Debug.Log("Player died!");
+
+		// Play death animation
+		_animator.Play("Death");
+
+		// Disable further updates to prevent additional calls to Die()
+		enabled = false;
+
+		// Invoke the game over logic after a delay to allow the animation to play
+		StartCoroutine(GameOverAfterAnimation());
+	}
+
+	IEnumerator GameOverAfterAnimation()
+	{
+		// Wait for the duration of the death animation
+		yield return new WaitForSeconds(_animator.GetCurrentAnimatorStateInfo(0).length);
+		Time.timeScale = 0f;
+		// Trigger game over logic
+		logic.gameOver();
+	}
 }
