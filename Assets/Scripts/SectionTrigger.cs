@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class SectionTrigger : MonoBehaviour
 {
-    public ObjectPool pool;
+    public ObjectPool sectionPool; 
+    public CoinPool coinPool;
     public Transform[] spawnPoints;
     public Transform Player; // Reference to the Trigger transform
     public float distanceAhead ; // Distance to spawn the new section ahead of the player
@@ -25,7 +26,7 @@ public class SectionTrigger : MonoBehaviour
 
     private void SpawnSection()
     {
-        GameObject newSection = pool.GetObject();
+        GameObject newSection = sectionPool.GetObject();
         newSection.transform.position = new Vector3(0, 0, Player.position.z + distanceAhead); // You can adjust this to your needs
         newSection.transform.rotation = Quaternion.Euler(0, 90, 0);
 
@@ -35,23 +36,62 @@ public class SectionTrigger : MonoBehaviour
         List<GameObject> obstacles = AddObstacles(newSection);
         sectionObstacles.Add(newSection, obstacles);
 
+        // Spawn coins in the new section
+        SpawnCoins(newSection);
+
         // If more than 2 sections are active, deactivate the oldest one
         if (activeSections.Count > 3)
         {
             GameObject oldSection = activeSections.Dequeue();
             List<GameObject> oldObstacles;
+            List<GameObject> oldCoins;
             if (sectionObstacles.TryGetValue(oldSection, out oldObstacles))
             {
                 foreach (GameObject obstacle in oldObstacles)
                 {
                     Destroy(obstacle);
+                    
                 }
+                
+
                 sectionObstacles.Remove(oldSection);
             }
-            pool.ReturnObject(oldSection);
+            if(sectionObstacles.TryGetValue(oldSection,out oldCoins))
+            {
+                foreach(GameObject coin in oldCoins){
+                    Destroy(coin);
+                }
+            }
+            sectionPool.ReturnObject(oldSection);
         }
     }
+    private void SpawnCoins(GameObject section)
+    {
+        // Define the specific X positions for coin placement
+        float[] xPositions = { -6.0f, -1.0f, 4.0f };
 
+        // Define the Z positions for each row of coins
+        float[] zPositions =
+        {
+        10.0f, 12.0f,17.0f, 18.0f,
+        20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 30.0f,32.0f,37.0f,39.0f
+    };
+
+        // Iterate over each Z position and place a coin at a random X position
+        foreach (float zOffset in zPositions)
+        {
+            // Select a random X position from the array
+            float randomX = xPositions[Random.Range(0, xPositions.Length)];
+
+            // Calculate the position based on the player's position and offsets
+            Vector3 coinPosition = new Vector3(randomX, 1.0f, Player.position.z + distanceAhead + zOffset);
+
+            // Spawn the coin
+            GameObject coin = coinPool.GetObject();
+            coin.transform.position = coinPosition;
+            coin.transform.parent = section.transform; // Parent the coin to the section
+        }
+    }
     private List<GameObject> AddObstacles(GameObject section)
     {
         List<GameObject> obstacles = new List<GameObject>();
@@ -67,8 +107,8 @@ public class SectionTrigger : MonoBehaviour
         new Vector3(5.5f, 0, Player.position.z+distanceAhead+15),
         new Vector3(-7f, 0, Player.position.z+distanceAhead+35),
         new Vector3(-7f, 0, Player.position.z+distanceAhead+35),
-        new Vector3(-8.5f, 7, Player.position.z+distanceAhead+15),
-        new Vector3(-8.5f, 7, Player.position.z+distanceAhead+35)
+        new Vector3(-8.5f, 8, Player.position.z+distanceAhead+15),
+        new Vector3(-8.5f, 8, Player.position.z+distanceAhead+35)
     };
 
         // Shuffle the list to randomize the order of positions

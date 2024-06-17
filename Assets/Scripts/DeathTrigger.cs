@@ -1,20 +1,29 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DeathTrigger : MonoBehaviour
 {
     public bool IsDead { get; private set; }
-    // Start is called before the first frame update
     public LogicScript logic;
     [SerializeField]
-    private float maxZPosition = -8f; // Set your threshold value
-    void Start()
+    private float maxZPosition = -8f; // Set your threshold value for instant death
+
+    private Vector3 initialPosition; // To reset to the initial position
+    private Vector3 lastPosition; // To check if the player is stuck
+    private float stuckCheckDuration = 3f; // Time to wait before checking if stuck
+    private float stuckThreshold = 0.1f; // Distance threshold to consider the player stuck
+    private Animator _animator;
+	
+
+    private void Start()
     {
         IsDead = false;
+        initialPosition = transform.position; // Store the initial position
+        lastPosition = transform.position; // Initialize last known position
+        StartCoroutine(CheckIfStuck()); // Start checking if the player is stuck
+        _animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     private void Update()
     {
         if (transform.position.z < maxZPosition)
@@ -23,6 +32,7 @@ public class DeathTrigger : MonoBehaviour
             logic.gameOver();
         }
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("KillZone"))
@@ -31,14 +41,64 @@ public class DeathTrigger : MonoBehaviour
             logic.gameOver();
         }
     }
-    public void Die()
+
+    
+
+    private IEnumerator CheckIfStuck()
     {
-        if (IsDead) return;
+        while (true)
+        {
+            yield return new WaitForSeconds(stuckCheckDuration);
 
-        IsDead = true;
+            float distanceMoved = Vector3.Distance(lastPosition, transform.position);
 
-        Debug.Log("Player died!");
-        Time.timeScale = 0;
-        // Perform actions such as playing death animation, reducing health, restarting level, etc.
+            // Check if the player is stuck and not below the death threshold
+            if (distanceMoved < stuckThreshold && transform.position.z >= maxZPosition)
+            {
+                ResetPosition();
+            }
+
+            lastPosition = transform.position;
+        }
     }
+    public void Die()
+	{
+		if (IsDead) return;
+
+		IsDead = true;
+
+		Debug.Log("Player died!");
+
+		// Play death animation
+		_animator.Play("Death");
+
+		// Disable further updates to prevent additional calls to Die()
+		enabled = false;
+
+		// Invoke the game over logic after a delay to allow the animation to play
+		StartCoroutine(GameOverAfterAnimation());
+	}
+
+	IEnumerator GameOverAfterAnimation()
+	{
+		// Wait for the duration of the death animation
+		yield return new WaitForSeconds(_animator.GetCurrentAnimatorStateInfo(0).length);
+		Time.timeScale = 0f;
+		// Trigger game over logic
+		logic.gameOver();
+	}
+
+    private void ResetPosition()
+    {
+        Debug.Log("Player is stuck. Resetting position.");
+        Vector3 newPosition = transform.position; // Get the current position
+        newPosition.z = initialPosition.z; // Reset only the z value
+        transform.position = newPosition; // Set the new position
+                                          // Optionally, reset other states or variables as needed
+    }
+	
+
+	
+
+	
 }
