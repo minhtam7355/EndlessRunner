@@ -73,8 +73,8 @@ public class SectionTrigger : MonoBehaviour
         // Define the Z positions for each row of coins
         float[] zPositions =
         {
-        10.0f, 12.0f,17.0f, 18.0f,
-        20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 30.0f,32.0f,37.0f,39.0f
+        4.0f,6.0f,8.0f,10.0f, 12.0f,17.0f, 19.0f,
+        21.0f, 23.0f, 25.0f, 27.0f, 29.0f, 31.0f,33.0f,38.0f,40.0f,42.0f
     };
 
         // Iterate over each Z position and place a coin at a random X position
