@@ -12,6 +12,8 @@ public class DeathTrigger : MonoBehaviour
     private Vector3 lastPosition; // To check if the player is stuck
     private float stuckCheckDuration = 3f; // Time to wait before checking if stuck
     private float stuckThreshold = 0.1f; // Distance threshold to consider the player stuck
+    private Animator _animator;
+	
 
     private void Start()
     {
@@ -19,6 +21,7 @@ public class DeathTrigger : MonoBehaviour
         initialPosition = transform.position; // Store the initial position
         lastPosition = transform.position; // Initialize last known position
         StartCoroutine(CheckIfStuck()); // Start checking if the player is stuck
+        _animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -39,15 +42,7 @@ public class DeathTrigger : MonoBehaviour
         }
     }
 
-    public void Die()
-    {
-        if (IsDead) return;
-
-        IsDead = true;
-        Debug.Log("Player died!");
-        Time.timeScale = 0; // Pause the game
-        // Perform other actions such as playing death animation, reducing health, restarting level, etc.
-    }
+    
 
     private IEnumerator CheckIfStuck()
     {
@@ -66,6 +61,32 @@ public class DeathTrigger : MonoBehaviour
             lastPosition = transform.position;
         }
     }
+    public void Die()
+	{
+		if (IsDead) return;
+
+		IsDead = true;
+
+		Debug.Log("Player died!");
+
+		// Play death animation
+		_animator.Play("Death");
+
+		// Disable further updates to prevent additional calls to Die()
+		enabled = false;
+
+		// Invoke the game over logic after a delay to allow the animation to play
+		StartCoroutine(GameOverAfterAnimation());
+	}
+
+	IEnumerator GameOverAfterAnimation()
+	{
+		// Wait for the duration of the death animation
+		yield return new WaitForSeconds(_animator.GetCurrentAnimatorStateInfo(0).length);
+		Time.timeScale = 0f;
+		// Trigger game over logic
+		logic.gameOver();
+	}
 
     private void ResetPosition()
     {
@@ -75,4 +96,9 @@ public class DeathTrigger : MonoBehaviour
         transform.position = newPosition; // Set the new position
                                           // Optionally, reset other states or variables as needed
     }
+	
+
+	
+
+	
 }
