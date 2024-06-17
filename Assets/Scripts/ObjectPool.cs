@@ -29,7 +29,7 @@ public class ObjectPool : MonoBehaviour
                 return obj;
             }
         }
-
+            
         // If no inactive objects, create a new one
         GameObject newObj = Instantiate(prefab);
         pool.Add(newObj);
