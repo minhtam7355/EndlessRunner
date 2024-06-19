@@ -9,6 +9,7 @@ public class LogicScript : MonoBehaviour
     public GameObject GameOverScene;
     public Text scoreText; // Reference to the UI Text element to display the score
     public Text coinText; // Reference to the UI Text element to display the coins
+    public Text highscoreText; // Reference to the UI Text element to display the high score
     private float score; // Player's score
     public float pointsPerSecond = 10f; // Points earned per second
     private bool isGameOver = false; // Track if the game is over
@@ -19,13 +20,17 @@ public class LogicScript : MonoBehaviour
     private const float timeScaleIncrement = 0.1f; // Increment for time scale
 
     private static int totalCoins = 0; // Total coins collected by the player
+    private int highScore; // Player's high score
 
     void Start()
     {
         score = 0f; // Initialize score
         totalCoins = PlayerPrefs.GetInt("TotalCoins", 0); // Load total coins from player prefs
+        highScore = PlayerPrefs.GetInt("HighScore", 0); // Load high score from player prefs
         UpdateScoreText(); // Update the score display
         UpdateCoinText(); // Update the coin display
+        UpdateHighScoreText(); // Update the high score display
+
         Time.timeScale = 1; // Ensure the game runs at normal speed
     }
 
@@ -36,6 +41,15 @@ public class LogicScript : MonoBehaviour
             // Increment the score based on the time passed
             score += pointsPerSecond * Time.deltaTime;
             UpdateScoreText(); // Update the score display
+
+            // Check if the current score exceeds the high score
+            if (Mathf.FloorToInt(score) > highScore)
+            {
+                highScore = Mathf.FloorToInt(score);
+                UpdateHighScoreText(); // Update the high score display
+                PlayerPrefs.SetInt("HighScore", highScore); // Save the high score
+                PlayerPrefs.Save();
+            }
 
             // Check if the score has reached the next milestone
             if (score >= nextSpeedIncreaseScore)
@@ -81,6 +95,14 @@ public class LogicScript : MonoBehaviour
                 ConvertPointsToCoins();
                 hasConvertedPointsToCoins = true; // Mark that points have been converted
             }
+
+            // Save the high score when the game is over
+            if (Mathf.FloorToInt(score) > highScore)
+            {
+                highScore = Mathf.FloorToInt(score);
+                PlayerPrefs.SetInt("HighScore", highScore);
+                PlayerPrefs.Save();
+            }
         }
     }
 
@@ -106,5 +128,10 @@ public class LogicScript : MonoBehaviour
     private void UpdateCoinText()
     {
         coinText.text = "Coins: " + totalCoins.ToString();
+    }
+
+    private void UpdateHighScoreText()
+    {
+        highscoreText.text = "High Score: " + highScore.ToString();
     }
 }
