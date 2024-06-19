@@ -9,6 +9,7 @@ TagManager:
   - KillZone
   - Logic
   - CoinTrigger
+  - Audio
   layers:
   - Default
   - TransparentFX
