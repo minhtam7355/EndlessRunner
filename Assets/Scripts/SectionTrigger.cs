@@ -18,7 +18,7 @@ public class SectionTrigger : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Trigger"))
+        if (other.gameObject.CompareTag("Player"))
         {
             SpawnSection();
         }
