@@ -4,8 +4,6 @@ public class SmoothCameraFollow : MonoBehaviour
 {
 	private Vector3 _offset;
 	[SerializeField]
-	private Transform _target;
-	[SerializeField]
 	private float _smoothTime;
 	private Vector3 _currentVelocity = Vector3.zero;
 
@@ -18,11 +16,11 @@ public class SmoothCameraFollow : MonoBehaviour
 	private Character _playerController;
 	private DeathTrigger _deathTrigger;
 
-	private void Awake()
+	private void Start()
 	{
-		_offset = transform.position - _target.position;
-		_playerController = _target.GetComponent<Character>();
-		_deathTrigger = _target.GetComponent<DeathTrigger>();
+		_offset = transform.position - GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position;
+		_playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
+		_deathTrigger = GameObject.FindGameObjectWithTag("Player").GetComponent<DeathTrigger>();
 	}
 
 	private void LateUpdate()
@@ -36,7 +34,7 @@ public class SmoothCameraFollow : MonoBehaviour
 		}
 
 		_isRolling = _playerController.InRoll;
-		Vector3 targetPosition = _target.position + _offset;
+		Vector3 targetPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position + _offset;
 
 		if (_isRolling)
 		{

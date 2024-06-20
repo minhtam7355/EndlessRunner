@@ -10,6 +10,8 @@ TagManager:
   - Logic
   - CoinTrigger
   - Audio
+  - SectionPool
+  - CoinPool
   layers:
   - Default
   - TransparentFX

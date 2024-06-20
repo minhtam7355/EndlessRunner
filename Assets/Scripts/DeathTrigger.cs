@@ -6,7 +6,7 @@ public class DeathTrigger : MonoBehaviour
 	public bool IsDead { get; private set; }
 	public LogicScript logic;
 	[SerializeField]
-	private float maxZPosition = -8f; // Set your threshold value for instant death
+	private float maxZPosition = -1f; // Set your threshold value for instant death
 
 	private Vector3 initialPosition; // To reset to the initial position
 	private Vector3 lastPosition; // To check if the player is stuck
@@ -24,6 +24,7 @@ public class DeathTrigger : MonoBehaviour
 
 	private void Start()
 	{
+		logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
 		IsDead = false;
 		initialPosition = transform.position; // Store the initial position
 		lastPosition = transform.position; // Initialize last known position
