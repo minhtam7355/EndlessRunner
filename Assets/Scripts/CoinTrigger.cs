@@ -1,24 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CoinTrigger : MonoBehaviour
 {
-    [SerializeField]
-    public Text coinText;
     public float rotationSpeed = 100.0f;
-    private static int coinCount = 0;
+
     private void OnTriggerEnter(Collider other)
     {
         // Check if the object that entered the trigger is tagged as "Player"
         if (other.CompareTag("Player"))
         {
-            // Increment the coin count
-            coinCount++;
-
-            // Update the coin text UI element
-            UpdateCoinText();
+            // Notify the LogicScript that a coin has been collected
+            LogicScript logicScript = FindObjectOfType<LogicScript>();
+            if (logicScript != null)
+            {
+                logicScript.CollectCoin();
+            }
 
             // Disable the coin object (make it disappear)
             gameObject.SetActive(false);
@@ -27,13 +25,10 @@ public class CoinTrigger : MonoBehaviour
             // Example: CoinPool.Instance.ReturnCoin(gameObject);
         }
     }
+
     void Update()
     {
         // Rotate the coin smoothly around the Y axis
         transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
-    }
-    private void UpdateCoinText()
-    {
-        coinText.text = "Coins: " + coinCount.ToString();
     }
 }
