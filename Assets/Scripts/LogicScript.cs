@@ -15,9 +15,9 @@ public class LogicScript : MonoBehaviour
     private bool isGameOver = false; // Track if the game is over
     private bool hasConvertedPointsToCoins = false; // Ensure coins are only converted once
 
-	private int nextSpeedIncreaseScore = 100; // Next score milestone for speed increase
-	private const float maxTimeScale = 10f; // Maximum game speed
-	private const float timeScaleIncrement = 0.1f; // Increment for time scale
+    private int nextSpeedIncreaseScore = 100; // Next score milestone for speed increase
+    private const float maxTimeScale = 10f; // Maximum game speed
+    private const float timeScaleIncrement = 0.1f; // Increment for time scale
 
     private static int totalCoins = 0; // Total coins collected by the player
     private int highScore; // Player's high score
@@ -34,13 +34,13 @@ public class LogicScript : MonoBehaviour
         Time.timeScale = 1; // Ensure the game runs at normal speed
     }
 
-	void Update()
-	{
-		if (!isGameOver)
-		{
-			// Increment the score based on the time passed
-			score += pointsPerSecond * Time.deltaTime;
-			UpdateScoreText(); // Update the score display
+    void Update()
+    {
+        if (!isGameOver)
+        {
+            // Increment the score based on the time passed
+            score += pointsPerSecond * Time.deltaTime;
+            UpdateScoreText(); // Update the score display
 
             // Check if the current score exceeds the high score
             if (Mathf.FloorToInt(score) > highScore)
@@ -60,34 +60,34 @@ public class LogicScript : MonoBehaviour
         }
     }
 
-	private void IncreaseGameSpeed()
-	{
-		// Increase the game speed but ensure it does not exceed the maximum time scale
-		if (Time.timeScale < maxTimeScale)
-		{
-			Time.timeScale += timeScaleIncrement;
-			Time.timeScale = Mathf.Min(Time.timeScale, maxTimeScale);
-			Debug.Log("Increased game speed. Current TimeScale: " + Time.timeScale);
-		}
-	}
+    private void IncreaseGameSpeed()
+    {
+        // Increase the game speed but ensure it does not exceed the maximum time scale
+        if (Time.timeScale < maxTimeScale)
+        {
+            Time.timeScale += timeScaleIncrement;
+            Time.timeScale = Mathf.Min(Time.timeScale, maxTimeScale);
+            Debug.Log("Increased game speed. Current TimeScale: " + Time.timeScale);
+        }
+    }
 
-	public void restartGame()
-	{
-		SceneManager.LoadScene("Main Scene");
-		Time.timeScale = 1;
-		isGameOver = false; // Reset game over state
-		hasConvertedPointsToCoins = false; // Reset coin conversion state
-		score = 0f; // Reset score
-		nextSpeedIncreaseScore = 100; // Reset the milestone
-	}
+    public void restartGame()
+    {
+        SceneManager.LoadScene("Main Scene");
+        Time.timeScale = 1;
+        isGameOver = false; // Reset game over state
+        hasConvertedPointsToCoins = false; // Reset coin conversion state
+        score = 0f; // Reset score
+        nextSpeedIncreaseScore = 100; // Reset the milestone
+    }
 
-	public void gameOver()
-	{
-		if (!isGameOver)
-		{
-			GameOverScene.SetActive(true);
-			isGameOver = true; // Stop score increment
-			Time.timeScale = 0; // Pause the game
+    public void gameOver()
+    {
+        if (!isGameOver)
+        {
+            GameOverScene.SetActive(true);
+            isGameOver = true; // Stop score increment
+            Time.timeScale = 0; // Pause the game
 
             // Convert points to coins only if it hasn't been done yet
             if (!hasConvertedPointsToCoins)
@@ -106,24 +106,24 @@ public class LogicScript : MonoBehaviour
         }
     }
 
-	private void ConvertPointsToCoins()
-	{
-		// Convert points to coins, 100 points = 1 coin
-		int newCoins = Mathf.FloorToInt(score / 100);
-		totalCoins += newCoins;
+    private void ConvertPointsToCoins()
+    {
+        // Convert points to coins, 100 points = 1 coin
+        int newCoins = Mathf.FloorToInt(score / 100);
+        totalCoins += newCoins;
 
-		// Save the updated total coins to player prefs
-		PlayerPrefs.SetInt("TotalCoins", totalCoins);
-		PlayerPrefs.Save();
+        // Save the updated total coins to player prefs
+        PlayerPrefs.SetInt("TotalCoins", totalCoins);
+        PlayerPrefs.Save();
 
-		// Update the coin text UI element
-		UpdateCoinText();
-	}
+        // Update the coin text UI element
+        UpdateCoinText();
+    }
 
-	private void UpdateScoreText()
-	{
-		scoreText.text = "Score: " + Mathf.FloorToInt(score).ToString();
-	}
+    private void UpdateScoreText()
+    {
+        scoreText.text = "Score: " + Mathf.FloorToInt(score).ToString();
+    }
 
     private void UpdateCoinText()
     {
