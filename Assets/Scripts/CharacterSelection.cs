@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class CharacterSelection : MonoBehaviour
 {
 	public GameObject[] characters;
+	[SerializeField] public TMPro.TMP_Text characterName;
 	public int selectedCharacter = 0;
 
 	public void NextCharacter()
@@ -29,4 +30,8 @@ public class CharacterSelection : MonoBehaviour
 		PlayerPrefs.SetInt("selectedCharacter", selectedCharacter);
 		SceneManager.LoadScene(2, LoadSceneMode.Single);
 	}
+    void Update()
+    {
+		characterName.text = characters[selectedCharacter].name;
+    }
 }
