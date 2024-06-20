@@ -11,7 +11,7 @@ public class Character : MonoBehaviour
 	private float _newXPosition = -1f;
 	[HideInInspector]
 	public bool SwipeLeft, SwipeRight, SwipeUp, SwipeDown;
-	public float XValue=1;
+	public float XValue = 1;
 	private CharacterController _characterController;
 	private Animator _animator;
 	private float _horizontalVelocity;
@@ -21,6 +21,13 @@ public class Character : MonoBehaviour
 	public bool InJump, InRoll;
 	private float _collisionHeight;
 	private float _collisionCenterY;
+	public AudioManager AudioManager;
+
+	void Awake()
+	{
+		AudioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+	}
+
 	void Start()
 	{
 		_characterController = GetComponent<CharacterController>();
@@ -43,12 +50,14 @@ public class Character : MonoBehaviour
 			{
 				_newXPosition = -6.5f;
 				CurrentSide = Side.Left;
+				AudioManager.PlaySFX(AudioManager.Dodge);
 				_animator.Play("Dodge_Left");
 			}
 			else if (CurrentSide == Side.Right)
 			{
 				_newXPosition = -1f;
 				CurrentSide = Side.Mid;
+				AudioManager.PlaySFX(AudioManager.Dodge);
 				_animator.Play("Dodge_Left");
 			}
 		}
@@ -58,12 +67,14 @@ public class Character : MonoBehaviour
 			{
 				_newXPosition = 4.5f;
 				CurrentSide = Side.Right;
+				AudioManager.PlaySFX(AudioManager.Dodge);
 				_animator.Play("Dodge_Right");
 			}
 			else if (CurrentSide == Side.Left)
 			{
 				_newXPosition = -1f;
 				CurrentSide = Side.Mid;
+				AudioManager.PlaySFX(AudioManager.Dodge);
 				_animator.Play("Dodge_Right");
 			}
 		}
@@ -83,6 +94,7 @@ public class Character : MonoBehaviour
 		if (SwipeUp)
 		{
 			_verticalVelocity = JumpPower;
+			AudioManager.PlaySFX(AudioManager.Jump);
 			_animator.CrossFadeInFixedTime("Jump", 0.1f);
 			InJump = true;
 		}
@@ -111,6 +123,7 @@ public class Character : MonoBehaviour
 			_verticalVelocity -= 10f;
 			_characterController.center = new Vector3(0, _collisionCenterY / 2f, 0);
 			_characterController.height = _collisionHeight / 2f;
+			AudioManager.PlaySFX(AudioManager.Dodge);
 			_animator.CrossFadeInFixedTime("Roll", 0.6f);
 			_animator.speed = 2f; // Speed up the Roll animation
 			InRoll = true;
