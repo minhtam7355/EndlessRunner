@@ -7,30 +7,30 @@ using UnityEngine.UI;
 
 public class LoadingManager : MonoBehaviour
 {
-    [SerializeField] private GameObject loadingScreen;
-    [SerializeField] private GameObject mainMenu;
-    [SerializeField] private Slider slider;
-    [SerializeField] private TextMeshProUGUI progressText; // Added TextMeshProUGUI field
+	[SerializeField] private GameObject loadingScreen;
+	[SerializeField] private GameObject mainMenu;
+	[SerializeField] private Slider slider;
+	[SerializeField] private TextMeshProUGUI progressText; // Added TextMeshProUGUI field
 
-    public void LoadLevel(int sceneIndex)
-    {
-        StartCoroutine(LoadAsynchronously(sceneIndex));
-    }
+	public void LoadLevel(int sceneIndex)
+	{
+		StartCoroutine(LoadAsynchronously(sceneIndex));
+	}
 
-    IEnumerator LoadAsynchronously(int sceneIndex)
-    {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
+	IEnumerator LoadAsynchronously(int sceneIndex)
+	{
+		AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
 
-        loadingScreen.SetActive(true);
-        mainMenu.SetActive(false);
+		loadingScreen.SetActive(true);
+		mainMenu.SetActive(false);
 
-        while (!operation.isDone)
-        {
-            float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            slider.value = progress;
-            progressText.text = (progress * 100).ToString("F0") + "%"; // Update progress text
+		while (!operation.isDone)
+		{
+			float progress = Mathf.Clamp01(operation.progress / 0.9f);
+			slider.value = progress;
+			progressText.text = (progress * 100).ToString("F0") + "%"; // Update progress text
 
-            yield return null;
-        }
-    }
+			yield return null;
+		}
+	}
 }
