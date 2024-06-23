@@ -14,7 +14,6 @@ public class DeathTrigger : MonoBehaviour
 	private float stuckThreshold = 0.1f; // Distance threshold to consider the player stuck
 	private Animator _animator;
 
-
 	public AudioManager AudioManager;
 
 	void Awake()
@@ -47,9 +46,13 @@ public class DeathTrigger : MonoBehaviour
 			Die();
 		}
 	}
-
-
-
+	private void OnCollisionEnter(Collision collision)
+	{
+		if (collision.gameObject.CompareTag("Enemy"))
+		{
+			Die();
+		}
+	}
 	private IEnumerator CheckIfStuck()
 	{
 		while (true)
@@ -67,6 +70,7 @@ public class DeathTrigger : MonoBehaviour
 			lastPosition = transform.position;
 		}
 	}
+
 	public void Die()
 	{
 		if (IsDead) return;
@@ -76,11 +80,10 @@ public class DeathTrigger : MonoBehaviour
 		Debug.Log("Player died!");
 
 		AudioManager.StopBackgroundMusic();
-
 		AudioManager.PlaySFX(AudioManager.Death);
 
 		// Play death animation
-		_animator.Play("Death");
+		_animator.CrossFadeInFixedTime("Death", 0.1f);
 
 		// Disable further updates to prevent additional calls to Die()
 		enabled = false;
@@ -89,10 +92,20 @@ public class DeathTrigger : MonoBehaviour
 		StartCoroutine(GameOverAfterAnimation());
 	}
 
-	IEnumerator GameOverAfterAnimation()
+	private IEnumerator GameOverAfterAnimation()
 	{
-		// Wait for the duration of the death animation
-		yield return new WaitForSeconds(_animator.GetCurrentAnimatorStateInfo(0).length);
+		// Wait until the "Death" animation is playing
+		while (!_animator.GetCurrentAnimatorStateInfo(0).IsName("Death"))
+		{
+			yield return null;
+		}
+
+		// Wait until the "Death" animation has finished
+		while (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+		{
+			yield return null;
+		}
+
 		Time.timeScale = 0f;
 		// Trigger game over logic
 		logic.gameOver();
@@ -104,11 +117,11 @@ public class DeathTrigger : MonoBehaviour
 		Vector3 newPosition = transform.position; // Get the current position
 		newPosition.z = initialPosition.z; // Reset only the z value
 		transform.position = newPosition; // Set the new position
-													 // Optionally, reset other states or variables as needed
 	}
 
-
-
-
-
+	public void ResetDeathState()
+	{
+		IsDead = false;
+		enabled = true;
+	}
 }

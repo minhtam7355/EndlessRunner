@@ -11,6 +11,8 @@ public class SmoothCameraFollow : MonoBehaviour
 	private float _rollOffsetY; // Adjust this value to your preference
 	[SerializeField]
 	private float _deathBumpDistance; // Distance to bump the camera back on character's death, on the Z-axis
+	[SerializeField]
+	private Vector3 _fixedOffset = new Vector3(0, 5, -10); // Fixed distance offset from the player
 
 	private bool _isRolling;
 	private Character _playerController;
@@ -18,7 +20,6 @@ public class SmoothCameraFollow : MonoBehaviour
 
 	private void Start()
 	{
-		_offset = transform.position - GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position;
 		_playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
 		_deathTrigger = GameObject.FindGameObjectWithTag("Player").GetComponent<DeathTrigger>();
 	}
@@ -34,7 +35,8 @@ public class SmoothCameraFollow : MonoBehaviour
 		}
 
 		_isRolling = _playerController.InRoll;
-		Vector3 targetPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position + _offset;
+		Vector3 playerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position;
+		Vector3 targetPosition = playerPosition + _fixedOffset;
 
 		if (_isRolling)
 		{
