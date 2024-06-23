@@ -2,33 +2,73 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class ChestController : MonoBehaviour
 {
     public GameObject chestClose;
     public GameObject chestOpen;
     public GameObject popup;
-    public TextMeshProUGUI questionText;  // use TextMeshProUGUI
-    public Button[] answerButtons;
+    public GameObject chestPrefab;
+    public Transform ChestTransform;
+    public QuestionData questionData; // Reference to your QuestionData asset
 
-    // correct button
-    private Button correctAnswerButton;
+    public Text questionText;
+    public Button[] answerButtons; // Array of buttons for answers
+
+    private bool canSpawnChest = true;
+    private bool isGamePaused = false;
+    private GameObject currentChest; // Reference to the current chest
 
     private void Start()
     {
-        // chest_open and popup is hided
         chestOpen.SetActive(false);
         popup.SetActive(false);
+    }
 
-        // Open chest in 2s
-        Invoke("OpenChest", 2f);
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            currentChest = gameObject; // Reference the current chest
+            OpenChest();
+
+            if (canSpawnChest)
+            {
+                SpawnChest();
+                canSpawnChest = false;
+            }
+        }
     }
 
     private void OpenChest()
     {
-        // Làm rương close nhảy lên và lắc qua lắc lại
         StartCoroutine(ShakeChest());
+    }
+
+    private void SpawnChest()
+    {
+        if (ChestTransform == null)
+        {
+            Debug.LogError("ChestTransform is not assigned!");
+            return;
+        }
+
+        if (chestPrefab == null)
+        {
+            Debug.LogError("chestPrefab is not assigned!");
+            return;
+        }
+
+        Vector3[] possiblePositions = new Vector3[]
+        {
+            new Vector3(-1, 1, ChestTransform.position.z + 80),
+            new Vector3(4, 1, ChestTransform.position.z + 80),
+            new Vector3(-6, 1, ChestTransform.position.z + 80)
+        };
+
+        Vector3 randomPosition = possiblePositions[Random.Range(0, possiblePositions.Length)];
+
+        Instantiate(chestPrefab, randomPosition, Quaternion.identity);
     }
 
     private IEnumerator ShakeChest()
@@ -36,14 +76,10 @@ public class ChestController : MonoBehaviour
         Vector3 originalPos = chestClose.transform.position;
         float elapsedTime = 0f;
 
-        // Tạo hiệu ứng nhảy lên
         float jumpHeight = 0.5f;
         Vector3 jumpPos = originalPos + new Vector3(0, jumpHeight, 0);
+        float jumpDuration = 0.2f;
 
-        // Thời gian nhảy lên
-        float jumpDuration = 0.5f;
-
-        // Nhảy lên
         while (elapsedTime < jumpDuration)
         {
             chestClose.transform.position = Vector3.Lerp(originalPos, jumpPos, elapsedTime / jumpDuration);
@@ -54,8 +90,7 @@ public class ChestController : MonoBehaviour
         chestClose.transform.position = jumpPos;
         elapsedTime = 0f;
 
-        // Lắc qua lắc lại khi ở không trung
-        float shakeDuration = 0.5f;
+        float shakeDuration = 0.2f;
         float shakeAmount = 0.1f;
 
         while (elapsedTime < shakeDuration)
@@ -69,10 +104,8 @@ public class ChestController : MonoBehaviour
         chestClose.transform.position = jumpPos;
         elapsedTime = 0f;
 
-        // Thời gian rơi xuống
-        float fallDuration = 0.5f;
+        float fallDuration = 0.2f;
 
-        // Rơi xuống
         while (elapsedTime < fallDuration)
         {
             chestClose.transform.position = Vector3.Lerp(jumpPos, originalPos, elapsedTime / fallDuration);
@@ -82,54 +115,90 @@ public class ChestController : MonoBehaviour
 
         chestClose.transform.position = originalPos;
 
-        // Sau khi rơi xuống, hiện rương open
         ShowOpenChest();
     }
 
     private void ShowOpenChest()
     {
+        Time.timeScale = 0f;
+        isGamePaused = true;
+
         chestClose.SetActive(false);
         chestOpen.SetActive(true);
-
-        // Hiển thị popup sau 0.5 giây
-        Invoke("ShowPopup", 0.5f);
-    }
-
-    private void ShowPopup()
-    {
         popup.SetActive(true);
-        questionText.text = "How old are you?";
 
-        // Gán nhãn đúng cho nút đúng
-        foreach (Button btn in answerButtons)
+        QuestionData.Question randomQuestion = questionData.questions[Random.Range(0, questionData.questions.Length)];
+
+        questionText.text = randomQuestion.questionText;
+
+        ShuffleAnswers(randomQuestion.answers);
+
+        for (int i = 0; i < answerButtons.Length; i++)
         {
-            if (btn.name == "AnswerC") // Giả sử AnswerC là đáp án đúng
+            answerButtons[i].GetComponentInChildren<Text>().text = randomQuestion.answers[i];
+
+            // Clear previous listeners to prevent multiple additions
+            answerButtons[i].onClick.RemoveAllListeners();
+
+            if (i == randomQuestion.correctAnswerIndex)
             {
-                correctAnswerButton = btn;
+                answerButtons[i].onClick.AddListener(CorrectAnswerSelected);
             }
-            btn.onClick.AddListener(CheckAnswer);
+            else
+            {
+                answerButtons[i].onClick.AddListener(IncorrectAnswerSelected);
+            }
         }
     }
 
-    private void CheckAnswer()
+    private void CorrectAnswerSelected()
     {
-        Button selectedButton = (Button)UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+        Debug.Log("Correct answer!");
+        EndPopup();
+    }
 
-        // Kiểm tra xem nút được chọn có phải là nút đúng không
-        if (selectedButton == correctAnswerButton)
+    private void IncorrectAnswerSelected()
+    {
+        Debug.Log("Incorrect answer!");
+        EndPopup();
+    }
+
+    private void EndPopup()
+    {
+        popup.SetActive(false);
+
+        Time.timeScale = 1f;
+        isGamePaused = false;
+
+        foreach (Button button in answerButtons)
         {
-            popup.SetActive(false);
-            Invoke("HideOpenChest", 0.5f);
+            button.onClick.RemoveAllListeners();
         }
-        else
-        {
-            Debug.Log("Sai rồi!");
-        }
+
+        // Destroy the current chest
+        Destroy(currentChest);
+
     }
 
     private void HideOpenChest()
     {
         chestOpen.SetActive(false);
         chestClose.SetActive(true);
+    }
+
+    private void OnDestroy()
+    {
+        Time.timeScale = 1f;
+    }
+
+    private void ShuffleAnswers(string[] answers)
+    {
+        for (int i = 0; i < answers.Length; i++)
+        {
+            string temp = answers[i];
+            int randomIndex = Random.Range(i, answers.Length);
+            answers[i] = answers[randomIndex];
+            answers[randomIndex] = temp;
+        }
     }
 }

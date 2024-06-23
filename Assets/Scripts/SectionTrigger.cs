@@ -13,6 +13,7 @@ public class SectionTrigger : MonoBehaviour
     public GameObject[] obstaclesAt5_5; // 1 obstacle
     public GameObject[] obstaclesAtMinus7; // 2 obstacles
     public GameObject[] roofObstacle; // Roof obstacles
+    
 
     private Queue<GameObject> activeSections = new Queue<GameObject>();
     private Dictionary<GameObject, List<GameObject>> sectionObstacles = new Dictionary<GameObject, List<GameObject>>();
@@ -23,7 +24,6 @@ public class SectionTrigger : MonoBehaviour
         sectionPool = GameObject.FindGameObjectWithTag("SectionPool").GetComponent<ObjectPool>();
         coinPool = GameObject.FindGameObjectWithTag("CoinPool").GetComponent<CoinPool>();
         Player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-
         // Initialize obstacles
         InitializeObstacles();
     }
@@ -44,8 +44,9 @@ public class SectionTrigger : MonoBehaviour
         if (other.gameObject.CompareTag("Trigger"))
         {
             SpawnSection();
-        }
+        } 
     }
+    
 
     private void SpawnSection()
     {
@@ -73,8 +74,8 @@ public class SectionTrigger : MonoBehaviour
         List<GameObject> coins = SpawnCoins(newSection);
         sectionCoins[newSection] = coins ?? new List<GameObject>();
 
-        // Deactivate oldest section if more than 3 sections are active
-        if (activeSections.Count > 3)
+        // Deactivate oldest section if more than 4 sections are active
+        if (activeSections.Count > 4)
         {
             GameObject oldSection = activeSections.Dequeue();
             CleanupOldSection(oldSection);
@@ -101,7 +102,7 @@ public class SectionTrigger : MonoBehaviour
             {
                 if (coin != null)
                 {
-                    Destroy(coin);
+                    CoinPool.Instance.ReturnObject(coin);
                 }
             }
             sectionCoins.Remove(oldSection);
@@ -109,6 +110,7 @@ public class SectionTrigger : MonoBehaviour
 
         if (oldSection != null)
         {
+            oldSection.SetActive(false);
             sectionPool.ReturnObject(oldSection);
         }
     }

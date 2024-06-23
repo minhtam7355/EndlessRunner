@@ -12,6 +12,7 @@ TagManager:
   - Audio
   - SectionPool
   - CoinPool
+  - Chest
   layers:
   - Default
   - TransparentFX
