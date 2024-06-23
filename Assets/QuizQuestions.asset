@@ -15,15 +15,15 @@ MonoBehaviour:
   questions:
   - questionText: What is the capital of France?
     answers:
+    - Rome
+    - Berlin
     - Paris
     - London
-    - Berlin
-    - Rome
-    correctAnswerIndex: 0
+    correctAnswerIndex: 2
   - questionText: Who painted the Mona Lisa?
     answers:
-    - Michelangelo
-    - Leonardo da Vinci
     - Vincent van Gogh
+    - Leonardo da Vinci
     - Pablo Picasso
+    - Michelangelo
     correctAnswerIndex: 1

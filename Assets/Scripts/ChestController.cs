@@ -23,13 +23,16 @@ public class ChestController : MonoBehaviour
     {
         chestOpen.SetActive(false);
         popup.SetActive(false);
+
+        // Shuffle questions at the start
+        questionData.ShuffleQuestions();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            currentChest = gameObject; // Reference the current chest
+            currentChest = gameObject; // Set the current chest to this game object
             OpenChest();
 
             if (canSpawnChest)
@@ -127,26 +130,33 @@ public class ChestController : MonoBehaviour
         chestOpen.SetActive(true);
         popup.SetActive(true);
 
+        // Pick a random question from the shuffled list
         QuestionData.Question randomQuestion = questionData.questions[Random.Range(0, questionData.questions.Length)];
 
         questionText.text = randomQuestion.questionText;
 
-        ShuffleAnswers(randomQuestion.answers);
-
+        // Display answers without shuffling them
         for (int i = 0; i < answerButtons.Length; i++)
         {
-            answerButtons[i].GetComponentInChildren<Text>().text = randomQuestion.answers[i];
-
-            // Clear previous listeners to prevent multiple additions
-            answerButtons[i].onClick.RemoveAllListeners();
-
-            if (i == randomQuestion.correctAnswerIndex)
+            if (i < randomQuestion.answers.Length)
             {
-                answerButtons[i].onClick.AddListener(CorrectAnswerSelected);
+                answerButtons[i].GetComponentInChildren<Text>().text = randomQuestion.answers[i];
+
+                // Clear previous listeners to prevent multiple additions
+                answerButtons[i].onClick.RemoveAllListeners();
+
+                if (i == randomQuestion.correctAnswerIndex)
+                {
+                    answerButtons[i].onClick.AddListener(CorrectAnswerSelected);
+                }
+                else
+                {
+                    answerButtons[i].onClick.AddListener(IncorrectAnswerSelected);
+                }
             }
             else
             {
-                answerButtons[i].onClick.AddListener(IncorrectAnswerSelected);
+                answerButtons[i].gameObject.SetActive(false);
             }
         }
     }
@@ -175,15 +185,16 @@ public class ChestController : MonoBehaviour
             button.onClick.RemoveAllListeners();
         }
 
-        // Destroy the current chest
+        // Destroy the entire chest GameObject
         Destroy(currentChest);
 
+        HideOpenChest();
     }
 
     private void HideOpenChest()
     {
         chestOpen.SetActive(false);
-        chestClose.SetActive(true);
+        Destroy(chestClose);
     }
 
     private void OnDestroy()
@@ -191,14 +202,5 @@ public class ChestController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    private void ShuffleAnswers(string[] answers)
-    {
-        for (int i = 0; i < answers.Length; i++)
-        {
-            string temp = answers[i];
-            int randomIndex = Random.Range(i, answers.Length);
-            answers[i] = answers[randomIndex];
-            answers[randomIndex] = temp;
-        }
-    }
+    // Removed the ShuffleAnswers method as it's no longer needed
 }

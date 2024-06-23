@@ -1,15 +1,27 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Question Data", menuName = "Question Data", order = 51)]
+[CreateAssetMenu(fileName = "QuestionData", menuName = "ScriptableObjects/QuestionData", order = 1)]
 public class QuestionData : ScriptableObject
 {
     [System.Serializable]
-    public struct Question
+    public class Question
     {
         public string questionText;
         public string[] answers;
-        public int correctAnswerIndex; // Index of the correct answer in the answers array
+        public int correctAnswerIndex;
     }
 
     public Question[] questions;
+
+    public void ShuffleQuestions()
+    {
+        for (int i = 0; i < questions.Length; i++)
+        {
+            Question temp = questions[i];
+            int randomIndex = Random.Range(i, questions.Length);
+            questions[i] = questions[randomIndex];
+            questions[randomIndex] = temp;
+        }
+    }
 }
