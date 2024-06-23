@@ -37,7 +37,6 @@ public class DeathTrigger : MonoBehaviour
 		if (transform.position.z < maxZPosition)
 		{
 			Die();
-			logic.gameOver();
 		}
 	}
 
@@ -46,7 +45,6 @@ public class DeathTrigger : MonoBehaviour
 		if (other.CompareTag("KillZone"))
 		{
 			Die();
-			logic.gameOver();
 		}
 	}
 
