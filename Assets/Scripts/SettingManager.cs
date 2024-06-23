@@ -43,20 +43,27 @@ public class SettingManager : MonoBehaviour
         PlayerPrefs.SetInt("FullscreenPreference", fullscreenToggle.isOn ? 1 : 0);
     }
 
-    public void SaveChange()
+    private void Start()
     {
+        LoadSettings();
+    }
+
+    // Save settings data to PlayerPrefs when they change
+    public void SaveSettings()
+    {
+        PlayerPrefs.SetFloat("masterVolume", masterSlider.value);
+        PlayerPrefs.SetFloat("musicVolume", musicSlider.value);
+        PlayerPrefs.SetFloat("sfxVolume", sfxSlider.value);
+        PlayerPrefs.SetInt("QualitySettingPreference", resolutionDropdown.value);
+        PlayerPrefs.SetInt("FullscreenPreference", fullscreenToggle.isOn ? 1 : 0);
         PlayerPrefs.Save();
     }
 
-    public void UnSaveChange()
+    // Load settings data from PlayerPrefs
+    private void LoadSettings()
     {
-        PlayerPrefs.DeleteAll();
-    }
-
-    private void Start()
-    {
-        if (PlayerPrefs.HasKey("masterVolume") 
-            && PlayerPrefs.HasKey("musicVolume") 
+        if (PlayerPrefs.HasKey("masterVolume")
+            && PlayerPrefs.HasKey("musicVolume")
             && PlayerPrefs.HasKey("sfxVolume")
             && PlayerPrefs.HasKey("QualitySettingPreference")
             && PlayerPrefs.HasKey("FullscreenPreference"))
@@ -65,10 +72,11 @@ public class SettingManager : MonoBehaviour
             musicSlider.value = PlayerPrefs.GetFloat("musicVolume");
             sfxSlider.value = PlayerPrefs.GetFloat("sfxVolume");
             resolutionDropdown.value = PlayerPrefs.GetInt("QualitySettingPreference");
-            fullscreenToggle.isOn = PlayerPrefs.GetInt("FullscreenPreference") == 1 ? true : false;
+            fullscreenToggle.isOn = PlayerPrefs.GetInt("FullscreenPreference") == 1;
         }
         else
         {
+            // Set default values if no saved data exists
             masterSlider.value = 1;
             musicSlider.value = 1;
             sfxSlider.value = 1;
@@ -76,14 +84,15 @@ public class SettingManager : MonoBehaviour
             fullscreenToggle.isOn = true;
         }
     }
-    
-    private void Update()
+
+    public void CancelChanges()
     {
-        PlayerPrefs.SetFloat("masterVolume", masterSlider.value);
-        PlayerPrefs.SetFloat("musicVolume", musicSlider.value);
-        PlayerPrefs.SetFloat("sfxVolume", sfxSlider.value);
-        PlayerPrefs.SetInt("QualitySettingPreference", resolutionDropdown.value);
-        PlayerPrefs.SetInt("FullscreenPreference", fullscreenToggle.isOn ? 1 : 0);
+        // Reset UI components to their original values
+        masterSlider.value = PlayerPrefs.GetFloat("masterVolume");
+        musicSlider.value = PlayerPrefs.GetFloat("musicVolume");
+        sfxSlider.value = PlayerPrefs.GetFloat("sfxVolume");
+        resolutionDropdown.value = PlayerPrefs.GetInt("QualitySettingPreference");
+        fullscreenToggle.isOn = PlayerPrefs.GetInt("FullscreenPreference") == 1;
     }
 }
 
