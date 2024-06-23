@@ -81,6 +81,8 @@ public class LogicScript : MonoBehaviour
 		nextSpeedIncreaseScore = 100; // Reset the milestone
 		UpdateCoinText(); // Update the coin displays
 		UpdateScoreText();
+
+		GameObject.FindGameObjectWithTag("Player").GetComponent<DeathTrigger>().ResetDeathState();
 	}
 
 	public void gameOver()
@@ -127,6 +129,14 @@ public class LogicScript : MonoBehaviour
 	public void CollectCoin()
 	{
 		sessionCoins++;
+		UpdateCoinText();
+	}
+	// New method to reward points and coins
+	public void RewardForEnemyDestruction(int points, int coins)
+	{
+		score += points;
+		sessionCoins += coins;
+		UpdateScoreText();
 		UpdateCoinText();
 	}
 }

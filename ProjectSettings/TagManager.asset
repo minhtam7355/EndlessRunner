@@ -12,6 +12,7 @@ TagManager:
   - Audio
   - SectionPool
   - CoinPool
+  - Enemy
   layers:
   - Default
   - TransparentFX

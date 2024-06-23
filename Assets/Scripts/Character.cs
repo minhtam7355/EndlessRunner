@@ -22,6 +22,10 @@ public class Character : MonoBehaviour
 	private float _collisionHeight;
 	private float _collisionCenterY;
 	public AudioManager AudioManager;
+	public GameObject bulletPrefab;
+	public float bulletSpeed = 10;
+	public float bulletSpawnOffset = 1.0f; // Distance in front of the character to spawn the bullet
+	public float bulletSpawnHeightOffset = 0.5f; // Height offset for bullet spawn position
 
 	void Awake()
 	{
@@ -40,6 +44,14 @@ public class Character : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			// Calculate the spawn position in front of the character
+			Vector3 bulletSpawnPosition = transform.position + transform.forward * bulletSpawnOffset + Vector3.up * bulletSpawnHeightOffset;
+			// Instantiate the bullet at the calculated position and character's rotation
+			var bullet = Instantiate(bulletPrefab, bulletSpawnPosition, transform.rotation);
+			bullet.GetComponent<Rigidbody>().velocity = transform.forward * bulletSpeed;
+		}
 		SwipeLeft = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow);
 		SwipeRight = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
 		SwipeUp = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
