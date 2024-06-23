@@ -6,8 +6,12 @@ using UnityEngine.UI;
 
 public class LogicScript : MonoBehaviour
 {
-	public GameObject GameOverScene;
-	public Text scoreText; // Reference to the UI Text element to display the score
+	public GameObject BackgroundGameOver ;
+    public GameObject GameOver;
+    public GameObject PlayAgain;
+    public GameObject ReturnMenu;
+	public GameObject PauseUI;
+    public Text scoreText; // Reference to the UI Text element to display the score
 	public Text coinText; // Reference to the UI Text element to display current session coins
 	public Text highscoreText; // Reference to the UI Text element to display the high score
 
@@ -82,12 +86,20 @@ public class LogicScript : MonoBehaviour
 		UpdateCoinText(); // Update the coin displays
 		UpdateScoreText();
 	}
+	public void returnToMenu()
+	{
+        SceneManager.LoadSceneAsync(0);
+    }
 
 	public void gameOver()
 	{
-		GameOverScene.SetActive(true);
+        BackgroundGameOver.SetActive(true);
+        GameOver.SetActive(true);
+		PlayAgain.SetActive(true );
+		ReturnMenu.SetActive(true );
+		PauseUI.SetActive(false);
 
-		isGameOver = true; // Stop score increment
+        isGameOver = true; // Stop score increment
 		Time.timeScale = 0; // Pause the game
 
 		UpdateTotalCoin();

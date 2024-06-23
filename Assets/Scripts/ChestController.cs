@@ -123,11 +123,12 @@ public class ChestController : MonoBehaviour
 
     private void ShowOpenChest()
     {
-        Time.timeScale = 0f;
+        
         isGamePaused = true;
 
         chestClose.SetActive(false);
         chestOpen.SetActive(true);
+        Time.timeScale = 0f;
         popup.SetActive(true);
 
         // Pick a random question from the shuffled list
