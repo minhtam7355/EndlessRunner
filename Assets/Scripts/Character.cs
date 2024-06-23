@@ -93,6 +93,10 @@ public class Character : MonoBehaviour
 		}
 		if (SwipeUp)
 		{
+			if (InJump)
+			{
+				return;
+			}
 			_verticalVelocity = JumpPower;
 			AudioManager.PlaySFX(AudioManager.Jump);
 			_animator.CrossFadeInFixedTime("Jump", 0.1f);
