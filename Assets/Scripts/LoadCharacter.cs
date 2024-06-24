@@ -23,9 +23,9 @@ public class LoadCharacter : MonoBehaviour
 			{
 				characterScript.bulletPrefab = bulletPrefabs[0]; // Use bullet1 for character 0
 			}
-			else if (selectedCharacter == 3)
+			else if (selectedCharacter == 1 || selectedCharacter == 2 || selectedCharacter == 3)
 			{
-				characterScript.bulletPrefab = bulletPrefabs[1]; // Use bullet2 for character 1
+				characterScript.bulletPrefab = bulletPrefabs[1]; // Use bullet2 for character 1, 2 ,3
 			}
 		}
 	}
