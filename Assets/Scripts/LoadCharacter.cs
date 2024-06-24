@@ -7,7 +7,7 @@ public class LoadCharacter : MonoBehaviour
 {
 	public GameObject[] characterPrefabs;
 	public Transform spawnPoint;
-	public GameObject bulletPrefab; // Add this line to hold the bullet prefab
+	public GameObject[] bulletPrefabs; // Array to hold different bullet prefabs
 
 	void Start()
 	{
@@ -18,7 +18,15 @@ public class LoadCharacter : MonoBehaviour
 		Character characterScript = clone.GetComponent<Character>();
 		if (characterScript != null)
 		{
-			characterScript.bulletPrefab = bulletPrefab;
+			// Assign the corresponding bullet prefab based on selected character
+			if (selectedCharacter == 0)
+			{
+				characterScript.bulletPrefab = bulletPrefabs[0]; // Use bullet1 for character 0
+			}
+			else if (selectedCharacter == 3)
+			{
+				characterScript.bulletPrefab = bulletPrefabs[1]; // Use bullet2 for character 1
+			}
 		}
 	}
 }

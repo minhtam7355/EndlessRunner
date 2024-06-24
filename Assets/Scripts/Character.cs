@@ -48,10 +48,17 @@ public class Character : MonoBehaviour
 		{
 			// Calculate the spawn position in front of the character
 			Vector3 bulletSpawnPosition = transform.position + transform.forward * bulletSpawnOffset + Vector3.up * bulletSpawnHeightOffset;
+
+			// Make sure the bullet is spawned in front of the character
+			// by adding the character's forward vector multiplied by bulletSpawnOffset
+			Vector3 offset = transform.forward * bulletSpawnOffset;
+			bulletSpawnPosition += offset;
+
 			// Instantiate the bullet at the calculated position and character's rotation
-			var bullet = Instantiate(bulletPrefab, bulletSpawnPosition, transform.rotation);
+			var bullet = Instantiate(bulletPrefab, bulletSpawnPosition, bulletPrefab.transform.rotation);
 			bullet.GetComponent<Rigidbody>().velocity = transform.forward * bulletSpeed;
 		}
+
 		SwipeLeft = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow);
 		SwipeRight = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
 		SwipeUp = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
@@ -98,17 +105,16 @@ public class Character : MonoBehaviour
 	}
 	public void Jump()
 	{
+		// Check if currently in the Falling animation and transition to Landing
 		if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Falling"))
 		{
 			_animator.Play("Landing");
 			InJump = false;
 		}
-		if (SwipeUp)
+
+		// Allow jump only when grounded and SwipeUp is pressed
+		if (_characterController.isGrounded && SwipeUp)
 		{
-			if (InJump)
-			{
-				return;
-			}
 			_verticalVelocity = JumpPower;
 			AudioManager.PlaySFX(AudioManager.Jump);
 			_animator.CrossFadeInFixedTime("Jump", 0.1f);
@@ -116,11 +122,15 @@ public class Character : MonoBehaviour
 		}
 		else
 		{
+			// Apply gravity when not jumping or already in the air
 			_verticalVelocity -= JumpPower * 2 * Time.deltaTime;
+
+			// Check if character is falling and play the Falling animation
 			if (_characterController.velocity.y < -0.1f)
 				_animator.Play("Falling");
 		}
 	}
+
 	internal float _rollCounter;
 	public void Roll()
 	{
