@@ -62,7 +62,7 @@ public class SaveManager : MonoBehaviour
 	public void ResetProgress()
 	{
 		// Reset all saved values to their default states
-		Money = 0;
+		Money = 5000;
 		CurrentCharacter = 0;
 		HighScore = 0;
 		CharactersUnlocked = new bool[4] { true, false, false, false };

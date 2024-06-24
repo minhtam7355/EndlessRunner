@@ -48,10 +48,17 @@ public class Character : MonoBehaviour
 		{
 			// Calculate the spawn position in front of the character
 			Vector3 bulletSpawnPosition = transform.position + transform.forward * bulletSpawnOffset + Vector3.up * bulletSpawnHeightOffset;
+
+			// Make sure the bullet is spawned in front of the character
+			// by adding the character's forward vector multiplied by bulletSpawnOffset
+			Vector3 offset = transform.forward * bulletSpawnOffset;
+			bulletSpawnPosition += offset;
+
 			// Instantiate the bullet at the calculated position and character's rotation
-			var bullet = Instantiate(bulletPrefab, bulletSpawnPosition, transform.rotation);
+			var bullet = Instantiate(bulletPrefab, bulletSpawnPosition, bulletPrefab.transform.rotation);
 			bullet.GetComponent<Rigidbody>().velocity = transform.forward * bulletSpeed;
 		}
+
 		SwipeLeft = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow);
 		SwipeRight = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
 		SwipeUp = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
