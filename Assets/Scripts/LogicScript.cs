@@ -6,8 +6,12 @@ using UnityEngine.UI;
 
 public class LogicScript : MonoBehaviour
 {
-	public GameObject GameOverScene;
-	public Text scoreText; // Reference to the UI Text element to display the score
+	public GameObject BackgroundGameOver ;
+    public GameObject GameOver;
+    public GameObject PlayAgain;
+    public GameObject ReturnMenu;
+	public GameObject PauseUI;
+    public Text scoreText; // Reference to the UI Text element to display the score
 	public Text coinText; // Reference to the UI Text element to display current session coins
 	public Text highscoreText; // Reference to the UI Text element to display the high score
 
@@ -60,7 +64,7 @@ public class LogicScript : MonoBehaviour
 		}
 	}
 
-	private void IncreaseGameSpeed()
+	public void IncreaseGameSpeed()
 	{
 		// Increase the game speed but ensure it does not exceed the maximum time scale
 		if (Time.timeScale < maxTimeScale)
@@ -70,8 +74,20 @@ public class LogicScript : MonoBehaviour
 			Debug.Log("Increased game speed. Current TimeScale: " + Time.timeScale);
 		}
 	}
+    public void IncreaseGameSpeedPenalty()
+    {
+        // Increase the game speed but ensure it does not exceed the maximum time scale
+        if (Time.timeScale < maxTimeScale)
+        {
+            Time.timeScale += timeScaleIncrement;
+            Time.timeScale += timeScaleIncrement;
+            Time.timeScale += timeScaleIncrement;
+            Time.timeScale = Mathf.Min(Time.timeScale, maxTimeScale);
+            Debug.Log("Increased game speed. Current TimeScale: " + Time.timeScale);
+        }
+    }
 
-	public void restartGame()
+    public void restartGame()
 	{
 		SceneManager.LoadSceneAsync(2);
 		Time.timeScale = 1;
@@ -84,12 +100,20 @@ public class LogicScript : MonoBehaviour
 
 		GameObject.FindGameObjectWithTag("Player").GetComponent<DeathTrigger>().ResetDeathState();
 	}
+	public void returnToMenu()
+	{
+        SceneManager.LoadSceneAsync(0);
+    }
 
 	public void gameOver()
 	{
-		GameOverScene.SetActive(true);
+        BackgroundGameOver.SetActive(true);
+        GameOver.SetActive(true);
+		PlayAgain.SetActive(true );
+		ReturnMenu.SetActive(true );
+		PauseUI.SetActive(false);
 
-		isGameOver = true; // Stop score increment
+        isGameOver = true; // Stop score increment
 		Time.timeScale = 0; // Pause the game
 
 		UpdateTotalCoin();
@@ -139,4 +163,15 @@ public class LogicScript : MonoBehaviour
 		UpdateScoreText();
 		UpdateCoinText();
 	}
+    public void RewardForAnswerQuestionCorrect(int points, int coins)
+    {
+        score += points;
+        sessionCoins += coins;
+        UpdateScoreText();
+        UpdateCoinText();
+    }
+    public void ApplyTimePenalty(float penaltyTime)
+    {
+		IncreaseGameSpeed();
+    }
 }

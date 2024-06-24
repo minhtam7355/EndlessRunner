@@ -4,14 +4,11 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-	public float life = 3;
+	
 	public int pointsForEnemy = 100; // Points awarded for destroying an enemy
 	public int coinsForEnemy = 3; // Coins awarded for destroying an enemy
 
-	void Awake()
-	{
-		Destroy(gameObject, life);
-	}
+	
 
 	void OnCollisionEnter(Collision collision)
 	{

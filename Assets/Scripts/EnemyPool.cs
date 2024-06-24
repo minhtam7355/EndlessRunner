@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinPool : MonoBehaviour
+public class EnemyPool : MonoBehaviour
 {
-    public static CoinPool Instance { get; private set; }
+    public static EnemyPool Instance { get; private set; }
     public GameObject prefab;
-    public int initialSize = 20;
+    public int initialSize = 6;
 
     private List<GameObject> pool;
 
