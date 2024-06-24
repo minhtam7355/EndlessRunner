@@ -44,7 +44,7 @@ public class DeathTrigger : MonoBehaviour
 		if (other.CompareTag("KillZone"))
 		{
 			Die();
-		}
+		} 
 	}
 	private void OnCollisionEnter(Collision collision)
 	{

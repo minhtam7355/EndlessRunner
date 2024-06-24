@@ -6,6 +6,7 @@ public class SectionTrigger : MonoBehaviour
 {
     public ObjectPool sectionPool;
     public CoinPool coinPool;
+    public EnemyPool enemyPool; // Reference to the enemy pool
     public Transform Player; // Reference to the player transform
     public float distanceAhead; // Distance to spawn the new section ahead of the player
     public GameObject[] obstaclesAtMinus5_5; // 3 obstacles
@@ -13,18 +14,18 @@ public class SectionTrigger : MonoBehaviour
     public GameObject[] obstaclesAt5_5; // 1 obstacle
     public GameObject[] obstaclesAtMinus7; // 2 obstacles
     public GameObject[] roofObstacle; // Roof obstacles
-    
 
     private Queue<GameObject> activeSections = new Queue<GameObject>();
     private Dictionary<GameObject, List<GameObject>> sectionObstacles = new Dictionary<GameObject, List<GameObject>>();
     private Dictionary<GameObject, List<GameObject>> sectionCoins = new Dictionary<GameObject, List<GameObject>>();
+    private Dictionary<GameObject, List<GameObject>> sectionEnemies = new Dictionary<GameObject, List<GameObject>>(); // To track enemies
 
     private void Start()
     {
         sectionPool = GameObject.FindGameObjectWithTag("SectionPool").GetComponent<ObjectPool>();
         coinPool = GameObject.FindGameObjectWithTag("CoinPool").GetComponent<CoinPool>();
+        enemyPool = GameObject.FindGameObjectWithTag("EnemyPool").GetComponent<EnemyPool>(); // Initialize enemy pool
         Player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-        // Initialize obstacles
         InitializeObstacles();
     }
 
@@ -44,9 +45,8 @@ public class SectionTrigger : MonoBehaviour
         if (other.gameObject.CompareTag("Trigger"))
         {
             SpawnSection();
-        } 
+        }
     }
-    
 
     private void SpawnSection()
     {
@@ -73,6 +73,9 @@ public class SectionTrigger : MonoBehaviour
 
         List<GameObject> coins = SpawnCoins(newSection);
         sectionCoins[newSection] = coins ?? new List<GameObject>();
+
+        List<GameObject> enemies = SpawnEnemies(newSection); // Spawn enemies
+        sectionEnemies[newSection] = enemies ?? new List<GameObject>();
 
         // Deactivate oldest section if more than 4 sections are active
         if (activeSections.Count > 4)
@@ -106,6 +109,18 @@ public class SectionTrigger : MonoBehaviour
                 }
             }
             sectionCoins.Remove(oldSection);
+        }
+
+        if (sectionEnemies.TryGetValue(oldSection, out List<GameObject> oldEnemies))
+        {
+            foreach (GameObject enemy in oldEnemies)
+            {
+                if (enemy != null)
+                {
+                    EnemyPool.Instance.ReturnObject(enemy); // Return enemy to pool
+                }
+            }
+            sectionEnemies.Remove(oldSection);
         }
 
         if (oldSection != null)
@@ -207,6 +222,42 @@ public class SectionTrigger : MonoBehaviour
         }
 
         return obstacles;
+    }
+
+    private List<GameObject> SpawnEnemies(GameObject section)
+    {
+        if (section == null)
+        {
+            Debug.LogError("Section is null, cannot spawn enemies.");
+            return null;
+        }
+
+        List<GameObject> enemies = new List<GameObject>();
+        float[] xPositions = { -6.0f, -1.0f, 4.0f }; // Possible x positions for enemies
+        float[] zPositions = { 10.0f, 20.0f, 30.0f }; // Possible z positions ahead of the section
+
+        int enemyCount = Random.Range(1, 3); // Random number of enemies to spawn per section
+
+        for (int i = 0; i < enemyCount; i++)
+        {
+            float randomX = xPositions[Random.Range(0, xPositions.Length)];
+            float randomZ = zPositions[Random.Range(0, zPositions.Length)];
+            Vector3 enemyPosition = new Vector3(randomX, 0, Player.position.z + distanceAhead + randomZ);
+
+            GameObject enemy = enemyPool.GetObject();
+            if (enemy == null)
+            {
+                Debug.LogError("Failed to get an enemy from the pool.");
+                continue;
+            }
+
+            enemy.transform.position = enemyPosition;
+            enemy.transform.parent = section.transform;
+
+            enemies.Add(enemy);
+        }
+
+        return enemies;
     }
 
     private void ShuffleArray(GameObject[] array)

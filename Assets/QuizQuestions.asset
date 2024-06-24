@@ -27,3 +27,59 @@ MonoBehaviour:
     - Pablo Picasso
     - Michelangelo
     correctAnswerIndex: 1
+  - questionText: Which planet is known as the "Red Planet"?
+    answers:
+    - Venus
+    - Mars
+    - Jupiter
+    - Saturn
+    correctAnswerIndex: 1
+  - questionText: Who was the first President of the United States?
+    answers:
+    - Thomas Jefferson
+    - Abraham Lincoln
+    - George Washington
+    - John Adams
+    correctAnswerIndex: 2
+  - questionText: What is the chemical symbol for the element oxygen?
+    answers:
+    - O
+    - Ox
+    - Og
+    - O2
+    correctAnswerIndex: 0
+  - questionText: Which is the largest desert in the world?
+    answers:
+    - Sahara
+    - Gobi
+    - Kalahari
+    - Antarctic Desert
+    correctAnswerIndex: 3
+  - questionText: Who wrote the play "Romeo and Juliet"?
+    answers:
+    - William Shakespeare
+    - Charles Dickens
+    - Mark Twain
+    - Jane Austen
+    correctAnswerIndex: 0
+  - questionText: What is the value of Pi to two decimal places?
+    answers:
+    - 3.12
+    - 3.14
+    - 3.16
+    - 3.18
+    correctAnswerIndex: 1
+  - questionText: What does "HTTP" stand for?
+    answers:
+    - HyperText Transfer Protocol
+    - HyperText Transaction Protocol
+    - HyperTerminal Transfer Process
+    - HyperTool Transfer Protocol
+    correctAnswerIndex: 0
+  - questionText: Who directed the movie "Inception"?
+    answers:
+    - Quentin Tarantino
+    - Steven Spielberg
+    - Christopher Nolan
+    - James Cameron
+    correctAnswerIndex: 2

@@ -64,7 +64,7 @@ public class LogicScript : MonoBehaviour
 		}
 	}
 
-	private void IncreaseGameSpeed()
+	public void IncreaseGameSpeed()
 	{
 		// Increase the game speed but ensure it does not exceed the maximum time scale
 		if (Time.timeScale < maxTimeScale)
@@ -74,8 +74,20 @@ public class LogicScript : MonoBehaviour
 			Debug.Log("Increased game speed. Current TimeScale: " + Time.timeScale);
 		}
 	}
+    public void IncreaseGameSpeedPenalty()
+    {
+        // Increase the game speed but ensure it does not exceed the maximum time scale
+        if (Time.timeScale < maxTimeScale)
+        {
+            Time.timeScale += timeScaleIncrement;
+            Time.timeScale += timeScaleIncrement;
+            Time.timeScale += timeScaleIncrement;
+            Time.timeScale = Mathf.Min(Time.timeScale, maxTimeScale);
+            Debug.Log("Increased game speed. Current TimeScale: " + Time.timeScale);
+        }
+    }
 
-	public void restartGame()
+    public void restartGame()
 	{
 		SceneManager.LoadSceneAsync(2);
 		Time.timeScale = 1;
@@ -151,4 +163,15 @@ public class LogicScript : MonoBehaviour
 		UpdateScoreText();
 		UpdateCoinText();
 	}
+    public void RewardForAnswerQuestionCorrect(int points, int coins)
+    {
+        score += points;
+        sessionCoins += coins;
+        UpdateScoreText();
+        UpdateCoinText();
+    }
+    public void ApplyTimePenalty(float penaltyTime)
+    {
+		IncreaseGameSpeed();
+    }
 }
