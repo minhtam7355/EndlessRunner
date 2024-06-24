@@ -1,6 +1,7 @@
 ﻿    using System.Collections;
     using System.Collections.Generic;
-    using UnityEngine;
+using TMPro;
+using UnityEngine;
     using UnityEngine.UI;
 
     public class ChestController : MonoBehaviour
@@ -11,7 +12,7 @@
         public GameObject chestPrefab;
         public Transform ChestTransform;
         public QuestionData questionData; // Reference to your QuestionData asset
-        public Text questionText;
+        public TMPro.TMP_Text questionText;
         public Button[] answerButtons; // Array of buttons for answers
 
         private bool canSpawnChest = true;
