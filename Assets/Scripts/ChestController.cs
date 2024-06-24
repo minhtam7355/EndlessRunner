@@ -1,226 +1,220 @@
-﻿    using System.Collections;
-    using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-    using UnityEngine.UI;
+using UnityEngine.UI;
 
-    public class ChestController : MonoBehaviour
-    {
-        public GameObject chestClose;
-        public GameObject chestOpen;
-        public GameObject popup;
-        public GameObject chestPrefab;
-        public Transform ChestTransform;
-        public QuestionData questionData; // Reference to your QuestionData asset
-        public TMPro.TMP_Text questionText;
-        public Button[] answerButtons; // Array of buttons for answers
+public class ChestController : MonoBehaviour
+{
+	public GameObject chestClose;
+	public GameObject chestOpen;
+	public GameObject popup;
+	public GameObject chestPrefab;
+	public Transform ChestTransform;
+	public QuestionData questionData; // Reference to your QuestionData asset
+	public TMPro.TMP_Text questionText;
+	public Button[] answerButtons; // Array of buttons for answers
 
-        private bool canSpawnChest = true;
-        private bool isGamePaused = false;
-        private GameObject currentChest; // Reference to the current chest
-        public int pointsForCorrect = 100; // Points awarded for CorrectAnswer
-        public int coinsForCorrect = 3; // Coins awarded for correctAnswer
+	private bool canSpawnChest = true;
+	private GameObject currentChest; // Reference to the current chest
+	public int pointsForCorrect = 100; // Points awarded for CorrectAnswer
+	public int coinsForCorrect = 3; // Coins awarded for correctAnswer
 
-        private void Start()
-        {
-            chestOpen.SetActive(false);
-            popup.SetActive(false);
+	private void Start()
+	{
+		chestOpen.SetActive(false);
+		popup.SetActive(false);
 
-            // Shuffle questions at the start
-            questionData.ShuffleQuestions();
-        }
+		// Shuffle questions at the start
+		questionData.ShuffleQuestions();
+	}
 
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                currentChest = gameObject; // Set the current chest to this game object
-                OpenChest();
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.CompareTag("Player"))
+		{
+			currentChest = gameObject; // Set the current chest to this game object
+			OpenChest();
 
-                if (canSpawnChest)
-                {
-                    SpawnChest();
-                    canSpawnChest = false;
-                }
-            }
-        }
+			if (canSpawnChest)
+			{
+				SpawnChest();
+				canSpawnChest = false;
+			}
+		}
+	}
 
-        private void OpenChest()
-        {
-            StartCoroutine(ShakeChest());
-        }
+	private void OpenChest()
+	{
+		StartCoroutine(ShakeChest());
+	}
 
-        private void SpawnChest()
-        {
-            if (ChestTransform == null)
-            {
-                Debug.LogError("ChestTransform is not assigned!");
-                return;
-            }
+	private void SpawnChest()
+	{
+		if (ChestTransform == null)
+		{
+			Debug.LogError("ChestTransform is not assigned!");
+			return;
+		}
 
-            if (chestPrefab == null)
-            {
-                Debug.LogError("chestPrefab is not assigned!");
-                return;
-            }
+		if (chestPrefab == null)
+		{
+			Debug.LogError("chestPrefab is not assigned!");
+			return;
+		}
 
-            Vector3[] possiblePositions = new Vector3[]
-            {
-                new Vector3(-1, 1, ChestTransform.position.z + 80),
-                new Vector3(4, 1, ChestTransform.position.z + 80),
-                new Vector3(-6, 1, ChestTransform.position.z + 80)
-            };
+		Vector3[] possiblePositions = new Vector3[]
+		{
+					 new Vector3(-1, 1, ChestTransform.position.z + 80),
+					 new Vector3(4, 1, ChestTransform.position.z + 80),
+					 new Vector3(-6, 1, ChestTransform.position.z + 80)
+		};
 
-            Vector3 randomPosition = possiblePositions[Random.Range(0, possiblePositions.Length)];
+		Vector3 randomPosition = possiblePositions[Random.Range(0, possiblePositions.Length)];
 
-            Instantiate(chestPrefab, randomPosition, Quaternion.identity);
-        }
+		Instantiate(chestPrefab, randomPosition, Quaternion.identity);
+	}
 
-        private IEnumerator ShakeChest()
-        {
-            Vector3 originalPos = chestClose.transform.position;
-            float elapsedTime = 0f;
+	private IEnumerator ShakeChest()
+	{
+		Vector3 originalPos = chestClose.transform.position;
+		float elapsedTime = 0f;
 
-            float jumpHeight = 0.5f;
-            Vector3 jumpPos = originalPos + new Vector3(0, jumpHeight, 0);
-            float jumpDuration = 0.2f;
+		float jumpHeight = 0.5f;
+		Vector3 jumpPos = originalPos + new Vector3(0, jumpHeight, 0);
+		float jumpDuration = 0.2f;
 
-            while (elapsedTime < jumpDuration)
-            {
-                chestClose.transform.position = Vector3.Lerp(originalPos, jumpPos, elapsedTime / jumpDuration);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
+		while (elapsedTime < jumpDuration)
+		{
+			chestClose.transform.position = Vector3.Lerp(originalPos, jumpPos, elapsedTime / jumpDuration);
+			elapsedTime += Time.deltaTime;
+			yield return null;
+		}
 
-            chestClose.transform.position = jumpPos;
-            elapsedTime = 0f;
+		chestClose.transform.position = jumpPos;
+		elapsedTime = 0f;
 
-            float shakeDuration = 0.2f;
-            float shakeAmount = 0.1f;
+		float shakeDuration = 0.2f;
+		float shakeAmount = 0.1f;
 
-            while (elapsedTime < shakeDuration)
-            {
-                float x = Random.Range(-shakeAmount, shakeAmount);
-                chestClose.transform.position = new Vector3(jumpPos.x + x, jumpPos.y, jumpPos.z);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
+		while (elapsedTime < shakeDuration)
+		{
+			float x = Random.Range(-shakeAmount, shakeAmount);
+			chestClose.transform.position = new Vector3(jumpPos.x + x, jumpPos.y, jumpPos.z);
+			elapsedTime += Time.deltaTime;
+			yield return null;
+		}
 
-            chestClose.transform.position = jumpPos;
-            elapsedTime = 0f;
+		chestClose.transform.position = jumpPos;
+		elapsedTime = 0f;
 
-            float fallDuration = 0.2f;
+		float fallDuration = 0.2f;
 
-            while (elapsedTime < fallDuration)
-            {
-                chestClose.transform.position = Vector3.Lerp(jumpPos, originalPos, elapsedTime / fallDuration);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
+		while (elapsedTime < fallDuration)
+		{
+			chestClose.transform.position = Vector3.Lerp(jumpPos, originalPos, elapsedTime / fallDuration);
+			elapsedTime += Time.deltaTime;
+			yield return null;
+		}
 
-            chestClose.transform.position = originalPos;
+		chestClose.transform.position = originalPos;
 
-            ShowOpenChest();
-        }
+		ShowOpenChest();
+	}
 
-        private void ShowOpenChest()
-        {
-        
-            isGamePaused = true;
-
-            chestClose.SetActive(false);
-            chestOpen.SetActive(true);
-            Time.timeScale = 0f;
-            popup.SetActive(true);
-
-            // Pick a random question from the shuffled list
-            QuestionData.Question randomQuestion = questionData.questions[Random.Range(0, questionData.questions.Length)];
-
-            questionText.text = randomQuestion.questionText;
-
-            // Display answers without shuffling them
-            for (int i = 0; i < answerButtons.Length; i++)
-            {
-                if (i < randomQuestion.answers.Length)
-                {
-                    answerButtons[i].GetComponentInChildren<Text>().text = randomQuestion.answers[i];
-
-                    // Clear previous listeners to prevent multiple additions
-                    answerButtons[i].onClick.RemoveAllListeners();
-
-                    if (i == randomQuestion.correctAnswerIndex)
-                    {
-                        answerButtons[i].onClick.AddListener(CorrectAnswerSelected);
-                    }
-                    else
-                    {
-                        answerButtons[i].onClick.AddListener(IncorrectAnswerSelected);
-                    }
-                }
-                else
-                {
-                    answerButtons[i].gameObject.SetActive(false);
-                }
-            }
-        }
-
-        private void CorrectAnswerSelected()
-        {
-            Debug.Log("Correct answer!");
-            LogicScript logic = FindObjectOfType<LogicScript>();
-            if (logic != null)
-            {
-                logic.RewardForAnswerQuestionCorrect(pointsForCorrect, coinsForCorrect);
-            }
-            EndPopup();
-        }
-
-        private void IncorrectAnswerSelected()
-        {
-            Debug.Log("Incorrect answer!");
-            EndPopup();
-        LogicScript logic = FindObjectOfType<LogicScript>();
-        if (logic != null)
-        {
-            logic.IncreaseGameSpeedPenalty();
-            logic.IncreaseGameSpeedPenalty();
-            logic.IncreaseGameSpeedPenalty();
+	private void ShowOpenChest()
+	{
 
 
-        }
+		chestClose.SetActive(false);
+		chestOpen.SetActive(true);
+		Time.timeScale = 0f;
+		popup.SetActive(true);
 
-    }
+		// Pick a random question from the shuffled list
+		QuestionData.Question randomQuestion = questionData.questions[Random.Range(0, questionData.questions.Length)];
 
-    private void EndPopup()
-        {
-            popup.SetActive(false);
-            Time.timeScale = 1f;
+		questionText.text = randomQuestion.questionText;
 
-            
-        
-            isGamePaused = false;
+		// Display answers without shuffling them
+		for (int i = 0; i < answerButtons.Length; i++)
+		{
+			if (i < randomQuestion.answers.Length)
+			{
+				answerButtons[i].GetComponentInChildren<Text>().text = randomQuestion.answers[i];
 
-            foreach (Button button in answerButtons)
-            {
-                button.onClick.RemoveAllListeners();
-            }
+				// Clear previous listeners to prevent multiple additions
+				answerButtons[i].onClick.RemoveAllListeners();
 
-            // Destroy the entire chest GameObject
-            Destroy(currentChest);
+				if (i == randomQuestion.correctAnswerIndex)
+				{
+					answerButtons[i].onClick.AddListener(CorrectAnswerSelected);
+				}
+				else
+				{
+					answerButtons[i].onClick.AddListener(IncorrectAnswerSelected);
+				}
+			}
+			else
+			{
+				answerButtons[i].gameObject.SetActive(false);
+			}
+		}
+	}
 
-            HideOpenChest();
-        }
+	private void CorrectAnswerSelected()
+	{
+		Debug.Log("Correct answer!");
+		LogicScript logic = FindObjectOfType<LogicScript>();
+		if (logic != null)
+		{
+			logic.RewardForAnswerQuestionCorrect(pointsForCorrect, coinsForCorrect);
+		}
+		EndPopup();
+	}
 
-        private void HideOpenChest()
-        {
-            chestOpen.SetActive(false);
-            Destroy(chestClose);
-        }
+	private void IncorrectAnswerSelected()
+	{
+		Debug.Log("Incorrect answer!");
+		EndPopup();
+		LogicScript logic = FindObjectOfType<LogicScript>();
+		if (logic != null)
+		{
+			logic.IncreaseGameSpeedPenalty();
+			logic.IncreaseGameSpeedPenalty();
+			logic.IncreaseGameSpeedPenalty();
 
-        private void OnDestroy()
-        {
-            Time.timeScale = 1f;
-        }
 
-        // Removed the ShuffleAnswers method as it's no longer needed
-    }
+		}
+
+	}
+
+	private void EndPopup()
+	{
+		popup.SetActive(false);
+		Time.timeScale = 1f;
+
+		foreach (Button button in answerButtons)
+		{
+			button.onClick.RemoveAllListeners();
+		}
+
+		// Destroy the entire chest GameObject
+		Destroy(currentChest);
+
+		HideOpenChest();
+	}
+
+	private void HideOpenChest()
+	{
+		chestOpen.SetActive(false);
+		Destroy(chestClose);
+	}
+
+	private void OnDestroy()
+	{
+		Time.timeScale = 1f;
+	}
+
+	// Removed the ShuffleAnswers method as it's no longer needed
+}
